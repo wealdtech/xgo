@@ -39,8 +39,8 @@ func init() {
 }
 
 // Cross compilation docker containers
-var dockerBase = "karalabe/xgo-base"
-var dockerDist = "karalabe/xgo-"
+var dockerBase = "suburbandad/xgo-base"
+var dockerDist = "suburbandad/xgo-"
 
 // Command line arguments to fine tune the compilation
 var (
@@ -305,6 +305,8 @@ func compile(image string, config *ConfigFlags, flags *BuildFlags, folder string
 	args = append(args, []string{"-e", "EXT_GOPATH=" + strings.Join(paths, ":")}...)
 
 	args = append(args, []string{image, config.Repository}...)
+
+	fmt.Printf("running docker %v", args)
 	return run(exec.Command("docker", args...))
 }
 
