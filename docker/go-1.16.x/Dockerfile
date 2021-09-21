@@ -3,6 +3,6 @@
 #
 # Released under the MIT license.
 
-FROM suburbandad/xgo-1.16.6
+FROM wealdtech/xgo-1.16.7
 
 MAINTAINER Péter Szilágyi <peterke@gmail.com>

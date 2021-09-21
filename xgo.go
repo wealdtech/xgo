@@ -39,8 +39,8 @@ func init() {
 }
 
 // Cross compilation docker containers
-var dockerBase = "suburbandad/xgo-base"
-var dockerDist = "suburbandad/xgo-"
+var dockerBase = "wealdtech/xgo-base"
+var dockerDist = "wealdtech/xgo-"
 
 // Command line arguments to fine tune the compilation
 var (
