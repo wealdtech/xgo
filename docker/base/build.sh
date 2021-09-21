@@ -46,40 +46,36 @@ function extension {
   fi
 }
 
+MODULE=$1
+
 # Either set a local build environemnt, or pull any remote imports
 if [ "$EXT_GOPATH" != "" ]; then
   # If local builds are requested, inject the sources
-  echo "Building locally $1..."
+  echo "Building locally ${MODULE}..."
   export GOPATH=$GOPATH:$EXT_GOPATH
   set -e
 
   # Find and change into the package folder
-  cd `go list -e -f {{.Dir}} $1`
+  cd `go list -e -f {{.Dir}} ${MODULE}`
   export GOPATH=$GOPATH:`pwd`/Godeps/_workspace
 else
-  # Inject all possible Godep paths to short circuit go gets
-  GOPATH_ROOT=$GOPATH/src
-  IMPORT_PATH=$1
-  while [ "$IMPORT_PATH" != "." ]; do
-    export GOPATH=$GOPATH:$GOPATH_ROOT/$IMPORT_PATH/Godeps/_workspace
-    IMPORT_PATH=`dirname $IMPORT_PATH`
-  done
-
   # Otherwise download the canonical import path (may fail, don't allow failures beyond)
-  echo "Fetching main repository $1..."
-  go get -v -d $1
+  echo "Fetching main repository ${MODULE}..."
+  mkdir -p $GOPATH/src/$(dirname ${MODULE})
+  cd $GOPATH/src/$(dirname ${MODULE})
+  git clone https://${MODULE}
   set -e
 
-  cd $GOPATH_ROOT/$1
+  cd $GOPATH/src/${MODULE}
 
   # Switch over the code-base to another checkout if requested
   if [ "$REPO_REMOTE" != "" ] || [ "$REPO_BRANCH" != "" ]; then
     # Detect the version control system type
-    IMPORT_PATH=$1
+    IMPORT_PATH=${MODULE}
     while [ "$IMPORT_PATH" != "." ] && [ "$REPO_TYPE" == "" ]; do
-      if [ -d "$GOPATH_ROOT/$IMPORT_PATH/.git" ]; then
+      if [ -d "$GOPATH/src/$IMPORT_PATH/.git" ]; then
         REPO_TYPE="git"
-      elif  [ -d "$GOPATH_ROOT/$IMPORT_PATH/.hg" ]; then
+      elif  [ -d "$GOPATH/src/$IMPORT_PATH/.hg" ]; then
         REPO_TYPE="hg"
       fi
       IMPORT_PATH=`dirname $IMPORT_PATH`
@@ -128,7 +124,7 @@ DEPS_ARGS=($ARGS)
 USR_LOCAL_CONTENTS=`ls /usr/local`
 
 # Configure some global build parameters
-NAME=`basename $1/$PACK`
+NAME=`basename ${MODULE}/$PACK`
 if [ "$OUT" != "" ]; then
   NAME=$OUT
 fi

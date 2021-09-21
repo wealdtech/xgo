@@ -306,7 +306,15 @@ func compile(image string, config *ConfigFlags, flags *BuildFlags, folder string
 
 	args = append(args, []string{image, config.Repository}...)
 
-	fmt.Printf("running docker %v", args)
+	argf := make([]string, len(args))
+	for i := range args {
+		if strings.Index(args[i], " ") == -1 {
+			argf[i] = args[i]
+		} else {
+			argf[i] = fmt.Sprintf("\"%s\"", args[i])
+		}
+	}
+	fmt.Printf("running docker %s", strings.Join(argf, " "))
 	return run(exec.Command("docker", args...))
 }
 
