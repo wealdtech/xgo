@@ -3,6 +3,6 @@
 #
 # Released under the MIT license.
 
-FROM wealdtech/xgo-1.16.x
+FROM wealdtech/xgo-1.17.x
 
 MAINTAINER Péter Szilágyi <peterke@gmail.com>
